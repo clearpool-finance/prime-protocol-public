@@ -1,0 +1,182 @@
+type Member @entity {
+  id: ID!
+  status: MemberStatus!
+  riskScore: BigInt!
+  pools: [Pool!]! @derivedFrom(field: "creator")
+  refs: [PoolMember!]! @derivedFrom(field: "primeRef")
+}
+
+enum MemberStatus {
+  PENDING
+  WHITELISTED
+  BLACKLISTED
+}
+
+type Pool @entity {
+  id: ID!
+  index: BigInt!
+  repaymentPeriodIndex: BigInt!
+  asset: Bytes!
+  borrower: Bytes!
+  creator: Member!
+  type: PoolType!
+  status: PoolStatus!
+  repaymentType: PoolRepaymentType!
+  size: BigInt!
+  filledSize: BigInt!
+  currentSize: BigInt!
+  rateMantissa: BigInt!
+  spreadRate: BigInt!
+  penaltyRate: BigInt!
+  originationRate: BigInt!
+  tenor: BigInt!
+  maturityDate: BigInt!
+  depositWindow: BigInt!
+  depositMaturity: BigInt!
+  createdAt: BigInt!
+  activeFrom: BigInt!
+  closedAt: BigInt!
+  defaultedAt: BigInt!
+  lastPaidAt: BigInt!
+  # config values
+  gracePeriod: BigInt!
+  monthlyRound: BigInt!
+  rollEndingRange: BigInt!
+
+  # temporary variable using for updating lastPaidAt
+  pendingRepaymentBlockAt: BigInt!
+  totalDuePaid: BigInt!
+  totalBorrowed: BigInt!
+  currentRoll: Roll
+  currentRepayment: Repayment
+  transactions: [Transaction!]! @derivedFrom(field: "pool")
+  rolls: [Roll!]! @derivedFrom(field: "pool")
+  repayments: [Repayment!]! @derivedFrom(field: "pool")
+  callbacks: [Callback!]! @derivedFrom(field: "pool")
+  members: [PoolMember!]!
+}
+
+type Repayment @entity {
+  id: ID!
+  index: BigInt!
+  pool: Pool!
+  startDate: BigInt!
+  endDate: BigInt!
+  paidAt: BigInt!
+  penalty: BigInt!
+  repaid: BigInt!
+  size: BigInt!
+  payments: [RepaymentPayment!]! @derivedFrom(field: "repayment")
+}
+
+type RepaymentPayment @entity {
+  id: ID!
+  repayment: Repayment!
+  lender: Bytes!
+  amount: BigInt!
+  spread: BigInt!
+  penalty: BigInt!
+}
+
+type _Prime @entity {
+  id: ID!
+  publicPools: [Pool!]!
+  members: [String!]!
+  poolIndex: BigInt!
+  minDepositWindow: BigInt!
+  minMonthlyMaturity: BigInt!
+  liquidityMinRange: BigInt!
+}
+
+enum PoolType {
+  PUBLIC
+  PRIVATE
+}
+
+enum PoolStatus {
+  OPEN
+  ACTIVE
+  CLOSED
+  DEFAULTED
+}
+
+enum PoolRepaymentType {
+  BULLET
+  MONTHLY
+}
+
+type PoolMember @entity {
+  id: ID!
+  address: Bytes!
+  primeRef: Member!
+  pool: Pool!
+  principal: BigInt!
+  lastPaidAt: BigInt!
+  status: MemberStatus
+  positions: [Position!]!
+  callbacks: [Callback!]!
+  transactions: [Transaction!]!
+
+  # persist member history after repayment
+  positionAmount: BigInt!
+  accrued: BigInt!
+  originationFeeAmount: BigInt!
+  spreadFeeAmount: BigInt!
+  penalty: BigInt!
+  totalDue: BigInt!
+  interestRepaid: BigInt!
+}
+
+type Roll @entity {
+  id: ID!
+  pool: Pool!
+  startDate: BigInt!
+  endDate: BigInt!
+  accepted: Boolean!
+  paid: Boolean!
+  createdAt: BigInt!
+}
+
+type Position @entity {
+  id: ID!
+  txHash: String!
+  pool: Pool!
+  lender: Bytes!
+  amount: BigInt!
+  interest: BigInt!
+  timestamp: BigInt!
+  endAt: BigInt!
+  paidAt: BigInt
+  paid: Boolean!
+  # persist amounts history
+  penalty: BigInt!
+  interestRepaid: BigInt!
+  spreadRepaid: BigInt!
+}
+
+type Callback @entity {
+  id: ID!
+  pool: Pool!
+  timestamp: BigInt!
+  lender: Bytes!
+  paid: Boolean!
+  txHash: String!
+}
+
+type Transaction @entity {
+  id: ID!
+  hash: String!
+  pool: Pool!
+  type: TxType!
+  from: Bytes!
+  to: Bytes!
+  amount: BigInt!
+  createdAt: BigInt!
+}
+
+enum TxType {
+  LEND
+  REPAY
+  REPAY_INTEREST
+  CALLBACK
+}

@@ -1,0 +1,11 @@
+{
+    "network": "base-sepolia",
+    "Prime": {
+        "address": "0x15795aadca3759d7b356DecE036c285b1FBb32aa",
+        "startBlock": 8092222
+    },
+    "PoolFactory": {
+        "address": "0xF66F6D2DC713c994182d29DF711088d4a6bE5Ab5",
+        "startBlock": 8092245
+    }
+}

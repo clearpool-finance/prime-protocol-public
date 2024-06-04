@@ -1,0 +1,11 @@
+{
+    "network": "optimism",
+    "Prime": {
+        "address": "0xC31761D26C856F6d2f31D0aCafBb1327f5Ec16de",
+        "startBlock": 112307738
+    },
+    "PoolFactory": {
+        "address": "0xe3E26D4187f3A8e100223576a37d30f2A89eb755",
+        "startBlock": 112307797
+    }
+}

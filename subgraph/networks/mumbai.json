@@ -1,0 +1,11 @@
+{
+    "network": "mumbai",
+    "Prime": {
+        "address": "0xa27c22a330ef644008b3024e4863986acCE69FEd",
+        "startBlock": 35220333
+    },
+    "PoolFactory": {
+        "address": "0x577C36D6D4abf53D3F664BAfB92AD7c78546C92d",
+        "startBlock": 36547654
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "network": "mainnet",
+    "Prime": {
+        "address": "0xE746cd792677F894ba1B8eCEBB84Bf006BA6A2D7",
+        "startBlock": 17577122
+    },
+    "PoolFactory": {
+        "address": "0x83D5c08eCfe3F711e1Ff34618c0Dcc5FeFBe1791",
+        "startBlock": 17577233
+    }
+}

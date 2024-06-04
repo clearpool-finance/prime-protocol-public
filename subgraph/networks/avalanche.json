@@ -1,0 +1,11 @@
+{
+    "network": "avalanche",
+    "Prime": {
+        "address": "0xb4546c6e2c69BBF5F29EaEAB3De3768D5Bb009df",
+        "startBlock": 45263981
+    },
+    "PoolFactory": {
+        "address": "0x7A05280940A23749106D8Fb2cA4b10B9D1C89067",
+        "startBlock": 45264014
+    }
+}

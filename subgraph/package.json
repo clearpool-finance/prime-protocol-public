@@ -1,0 +1,39 @@
+{
+    "name": "subgraph",
+    "license": "UNLICENSED",
+    "scripts": {
+        "update-deployments": "node ./scripts/updateDeployments.js",
+        "update-abi": "node ./scripts/importAbis.js",
+        "prepare:test": "mustache networks/sepolia.json subgraph.template.yaml > subgraph.yaml",
+        "prepare:main": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml",
+        "prepare:optimism": "mustache networks/optimism.json subgraph.template.yaml > subgraph.yaml",
+        "prepare:base": "mustache networks/base.json subgraph.template.yaml > subgraph.yaml",
+        "prepare:baseSepolia": "mustache networks/baseSepolia.json subgraph.template.yaml > subgraph.yaml",
+        "prepare:avalanche": "mustache networks/avalanche.json subgraph.template.yaml > subgraph.yaml",
+        "codegen": "npm run update-abi && npm run prepare:test && graph codegen",
+        "codegen-only": "npm run prepare:test && graph codegen",
+        "build:test": "npm run prepare:test && graph build",
+        "build:main": "npm run prepare:main && graph build",
+        "build:optimism": "npm run prepare:optimism && graph build",
+        "build:base": "npm run prepare:base && graph build",
+        "build:baseSepolia": "npm run prepare:baseSepolia && graph build",
+        "build:avalanche": "npm run prepare:avalanche && graph build",
+        "deploy:test-hosted": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/api/v0 georgeciubotaru/clearpool-prime-sepolia --deploy-key ${GRAPH_TOKEN}",
+        "deploy:test-studio": "graph deploy --studio clearpool-prime-sepolia --deploy-key ${DEPLOY_KEY}",
+        "deploy:test": "npm run prepare:test && npm run deploy:test-studio",
+        "deploy:main-hosted": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/api/v0 georgeciubotaru/clearpool-prime-mainnet --deploy-key ${GRAPH_TOKEN}",
+        "deploy:main-studio": "graph deploy --studio clearpool-prime-mainnet --deploy-key ${DEPLOY_KEY}",
+        "deploy:optimism": "npm run prepare:optimism && graph deploy --studio clearpool-prime-optimism --deploy-key ${DEPLOY_KEY}",
+        "deploy:base": "npm run prepare:base && graph deploy --studio clearpool-prime-base --deploy-key ${DEPLOY_KEY}",
+        "deploy:main": "npm run prepare:main && npm run deploy:main-studio",
+        "deploy:baseSepolia": "npm run prepare:baseSepolia && graph deploy --studio clearpool-prime-base-sepolia --deploy-key ${DEPLOY_KEY}",
+        "deploy:avalanche": "npm run prepare:avalanche && graph deploy --studio clearpool-prime-avalanche --deploy-key ${DEPLOY_KEY}"
+    },
+    "dependencies": {
+        "@graphprotocol/graph-cli": "0.69.1",
+        "@graphprotocol/graph-ts": "0.29.3"
+    },
+    "devDependencies": {
+        "mustache": "^3.1.0"
+    }
+}

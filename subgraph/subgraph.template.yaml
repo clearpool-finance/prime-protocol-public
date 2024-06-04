@@ -1,0 +1,123 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+
+features: 
+  - nonFatalErrors
+  # - fullTextSearch
+  # - ipfsOnEthereumContracts
+
+dataSources:
+  - kind: ethereum/contract
+    name: Prime
+    network: "{{network}}"
+    source:
+      address: "{{Prime.address}}"
+      abi: PrimeAbi
+      startBlock: {{Prime.startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./mapping/prime.ts
+      entities:
+        - Member
+        - _Prime
+      abis:
+        - name: PrimeAbi
+          file: ./abis/prime.json
+      eventHandlers:
+        - event: MemberCreated(indexed address)
+          handler: handleMemberCreate
+        - event: MemberWhitelisted(indexed address)
+          handler: handleMemberWhitelist
+        - event: MemberBlacklisted(indexed address)
+          handler: handleMemberBlacklist
+        - event: RiskScoreChanged(indexed address,uint256)
+          handler: handleMemberRiskScoreChange
+  - kind: ethereum/contract
+    name: PoolFactory
+    network: "{{network}}"
+    source:
+      address: "{{PoolFactory.address}}"
+      abi: FactoryAbi
+      startBlock: {{PoolFactory.startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./mapping/factory.ts
+      entities:
+        - Pool
+        - _Prime
+      abis:
+        - name: FactoryAbi
+          file: ./abis/poolfactoryharness.json
+      eventHandlers:
+        - event: PoolCreated(address,indexed address,bool,indexed address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)
+          handler: handleCreatePool
+        - event: MinDepositWindowChanged(uint256)
+          handler: handleMinDepositChange
+        - event: MinMonthlyMaturityChanged(uint256)
+          handler: handleMinMonthlyMaturityChange
+        - event: LiquidityMinRangeChanged(uint256)
+          handler: handleLiquidityMinRangeChange
+templates:
+  - name: Pool
+    kind: "ethereum/contract"
+    network: "{{network}}"
+    source:
+      abi: PoolAbi
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./mapping/pool.ts
+      entities:
+        - Pool
+        - PoolMember
+        - Repayment
+        - Transaction
+        - Roll
+        - Callback
+        - _Prime
+        - Position
+      abis:
+        - name: PoolAbi
+          file: ./abis/poolharness.json
+      eventHandlers:
+        - event: Activated(uint256,uint256)
+          handler: handleActivate
+        - event: ConvertedToPublic()
+          handler: handleSwitchVisibilityToPublic
+        - event: Defaulted()
+          handler: handleDefault
+        - event: Closed()
+          handler: handleClose
+        - event: RollRequested(indexed uint256)
+          handler: handleRollRequest
+        - event: RollAccepted(indexed uint256,uint256)
+          handler: handleRollAccept
+        - event: RollRejected(indexed uint256,address)
+          handler: handleRollReject
+        - event: CallbackCreated(indexed address)
+          handler: handleCallbackCreate
+        - event: CallbackCancelled(indexed address)
+          handler: handleCallbackCancel
+        - event: LenderWhitelisted(address)
+          handler: handleLenderWhitelist
+        - event: LenderBlacklisted(address)
+          handler: handleLenderBlacklist
+        - event: Lent(indexed address,uint256)
+          handler: handleLend
+        - event: Repayed(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleRepay
+        - event: RepayedInterest(indexed address,uint256,uint256,uint256)
+          handler: handleRepayInterest
+        - event: GracePeriodChanged(uint256)
+          handler: handleGracePeriodChange
+        - event: MonthlyRoundPeriodChanged(uint256)
+          handler: handleMonthlyRoundPeriodChange
+        - event: RollRangePeriodChanged(uint256)
+          handler: handleRollRangePeriodChange
+
